@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -20,6 +21,11 @@ namespace Pong
         Texture2D paddle;
         Vector2 paddlePositionL;
         Vector2 paddlePositionR;
+
+        // sound
+        SoundEffect hitSound;
+        SoundEffect winSound;
+        SoundEffect loseSound;
 
         public Pong()
         {
@@ -63,6 +69,9 @@ namespace Pong
             // make mouse visible
             IsMouseVisible = true;
 
+            // Sound volume
+            SoundEffect.MasterVolume = 0.5f;
+
             base.Initialize();
         }
 
@@ -76,6 +85,10 @@ namespace Pong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            // load sounds
+            hitSound = Content.Load<SoundEffect>("Sounds/pong_hit");
+            winSound = Content.Load<SoundEffect>("Sounds/pong_win");
+            loseSound = Content.Load<SoundEffect>("Sounds/pong_lose");
         }
 
         /// <summary>
@@ -135,8 +148,6 @@ namespace Pong
             int ballMaxX = GraphicsDevice.Viewport.Width - ball.Width;
             int ballMaxY = GraphicsDevice.Viewport.Height - ball.Height;
 
-            //if (ballPosition.X > ballMaxX || ballPosition.X < 0)
-            //    ballSpeed.X *= -1;
             // win condition
             if (ballPosition.X < 0)
             {
@@ -148,6 +159,8 @@ namespace Pong
                 // reset paddles
                 paddlePositionL.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
                 paddlePositionR.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
+                // play lose sound
+                loseSound.Play();
             }
             else if (ballPosition.X > ballMaxX)
             {
@@ -159,6 +172,8 @@ namespace Pong
                 // reset paddles
                 paddlePositionL.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
                 paddlePositionR.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
+                // play win sound
+                winSound.Play();
             }
 
             // bounce on walls
@@ -181,6 +196,9 @@ namespace Pong
 
                 // bounce ball
                 ballSpeed.X *= -1;
+
+                // play sound
+                hitSound.Play();
             }
 
             if (ballRect.Intersects(paddleRectR))
@@ -194,6 +212,9 @@ namespace Pong
 
                 // bounce ball
                 ballSpeed.X *= -1;
+
+                // play sound
+                hitSound.Play();
             }
 
             base.Update(gameTime);
