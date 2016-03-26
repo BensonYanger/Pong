@@ -29,6 +29,7 @@ namespace Pong
         SoundEffect loseSound;
 
         // rng
+        int ballRng;
         Random rnd = new Random();
 
         public Pong()
@@ -77,7 +78,6 @@ namespace Pong
             SoundEffect.MasterVolume = 0.5f;
 
             // ball spawn
-            int ballRng;
             ballRng = rnd.Next(0, 9);
 
             if (ballRng <= 4)
@@ -169,7 +169,6 @@ namespace Pong
             if (ballPosition.X < 0)
             {
                 // reset ball
-                int ballRng;
                 ballRng = rnd.Next(0, 10);
 
                 if (ballRng <= 4)
@@ -193,7 +192,6 @@ namespace Pong
             else if (ballPosition.X > ballMaxX)
             {
                 // reset ball
-                int ballRng;
                 ballRng = rnd.Next(0, 10);
 
                 if (ballRng <= 4)
