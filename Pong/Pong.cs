@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Pong
 {
@@ -16,7 +17,7 @@ namespace Pong
         // ball
         Texture2D ball;
         Vector2 ballPosition;
-        Vector2 ballSpeed = new Vector2(200, 200);
+        Vector2 ballSpeed;
 
         Texture2D paddle;
         Vector2 paddlePositionL;
@@ -26,6 +27,9 @@ namespace Pong
         SoundEffect hitSound;
         SoundEffect winSound;
         SoundEffect loseSound;
+
+        // rng
+        Random rnd = new Random();
 
         public Pong()
         {
@@ -71,6 +75,19 @@ namespace Pong
 
             // Sound volume
             SoundEffect.MasterVolume = 0.5f;
+
+            // ball spawn
+            int ballRng;
+            ballRng = rnd.Next(0, 9);
+
+            if (ballRng <= 4)
+            {
+                ballSpeed = new Vector2(200, 200);
+            }
+            else if (ballRng >= 5)
+            {
+                ballSpeed = new Vector2(-200, -200);
+            }
 
             base.Initialize();
         }
@@ -152,10 +169,21 @@ namespace Pong
             if (ballPosition.X < 0)
             {
                 // reset ball
-                ballSpeed.X = 200;
-                ballSpeed.Y = 200;
+                int ballRng;
+                ballRng = rnd.Next(0, 10);
+
+                if (ballRng <= 4)
+                {
+                    ballSpeed.X = 200;
+                    ballSpeed.Y = 200;
+                }
+                else if (ballRng >= 5)
+                {
+                    ballSpeed.X = -200;
+                    ballSpeed.Y = -200;
+                }
                 ballPosition.X = graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width;
-                ballPosition.Y = graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height;
+                ballPosition.Y = (graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height) + rnd.Next(-200, 200);
                 // reset paddles
                 paddlePositionL.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
                 paddlePositionR.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
@@ -165,10 +193,21 @@ namespace Pong
             else if (ballPosition.X > ballMaxX)
             {
                 // reset ball
-                ballSpeed.X = 200;
-                ballSpeed.Y = 200;
+                int ballRng;
+                ballRng = rnd.Next(0, 10);
+
+                if (ballRng <= 4)
+                {
+                    ballSpeed.X = 200;
+                    ballSpeed.Y = 200;
+                }
+                else if (ballRng >= 5)
+                {
+                    ballSpeed.X = -200;
+                    ballSpeed.Y = -200;
+                }
                 ballPosition.X = graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width;
-                ballPosition.Y = graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height;
+                ballPosition.Y = (graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height) + rnd.Next(-200, 200);
                 // reset paddles
                 paddlePositionL.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
                 paddlePositionR.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
