@@ -14,8 +14,8 @@ namespace Pong
 
         // ball
         Texture2D ball;
-        Vector2 ballPosition = new Vector2(250, 250);
-        Vector2 ballSpeed = new Vector2(150, 150);
+        Vector2 ballPosition;
+        Vector2 ballSpeed = new Vector2(200, 200);
 
         Texture2D paddle;
         Vector2 paddlePositionL;
@@ -44,7 +44,7 @@ namespace Pong
             }
             paddle.SetData<Color>(paddleData);
 
-            paddlePositionL = new Vector2(25, graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height);
+            paddlePositionL = new Vector2(25 - paddle.Width, graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height);
             paddlePositionR = new Vector2(graphics.GraphicsDevice.Viewport.Width - 25, graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height);
 
             // ball
@@ -54,6 +54,8 @@ namespace Pong
             {
                 ballData[i] = Color.White;
             }
+
+            ballPosition = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width, graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height);
 
             ball.SetData<Color>(ballData);
 
@@ -97,28 +99,102 @@ namespace Pong
 
             // TODO: Add your update logic here
             // paddle
-            //move the paddles
+            // move the paddle
             KeyboardState keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.Up))
                 paddlePositionL.Y -= 5;
             else if (keyState.IsKeyDown(Keys.Down))
                 paddlePositionL.Y += 5;
 
-            //paddle bounds checking
+            // move the right paddle
+            if (ballPosition.Y < paddlePositionR.Y + paddle.Height / 2)
+                paddlePositionR.Y -= 5;
+            else if (ballPosition.Y > paddlePositionR.Y + paddle.Height / 2)
+                paddlePositionR.Y += 5;
 
+            //paddle bounds checking
+            int paddleMaxY = GraphicsDevice.Viewport.Height - paddle.Height;
+
+            // left paddle
+            if (paddlePositionL.Y < 0)
+                this.paddlePositionL.Y = 0;
+            else if (paddlePositionL.Y > paddleMaxY)
+                this.paddlePositionL.Y = GraphicsDevice.Viewport.Height - paddle.Height;
+
+            // right paddle
+            if (paddlePositionR.Y < 0)
+                this.paddlePositionR.Y = 0;
+            else if (paddlePositionR.Y > paddleMaxY)
+                this.paddlePositionR.Y = GraphicsDevice.Viewport.Height - paddle.Height;
 
             // ball
             // move the ball
             ballPosition += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            int maxX = GraphicsDevice.Viewport.Width - ball.Width;
-            int maxY = GraphicsDevice.Viewport.Height - ball.Height;
-
             // ball bounds checking
-            if (ballPosition.X > maxX || ballPosition.X < 0)
-                ballSpeed.X *= -1;
-            if (ballPosition.Y > maxY || ballPosition.Y < 0)
+            int ballMaxX = GraphicsDevice.Viewport.Width - ball.Width;
+            int ballMaxY = GraphicsDevice.Viewport.Height - ball.Height;
+
+            //if (ballPosition.X > ballMaxX || ballPosition.X < 0)
+            //    ballSpeed.X *= -1;
+            // win condition
+            if (ballPosition.X < 0)
+            {
+                // reset ball
+                ballSpeed.X = 200;
+                ballSpeed.Y = 200;
+                ballPosition.X = graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width;
+                ballPosition.Y = graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height;
+                // reset paddles
+                paddlePositionL.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
+                paddlePositionR.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
+            }
+            else if (ballPosition.X > ballMaxX)
+            {
+                // reset ball
+                ballSpeed.X = 200;
+                ballSpeed.Y = 200;
+                ballPosition.X = graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width;
+                ballPosition.Y = graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height;
+                // reset paddles
+                paddlePositionL.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
+                paddlePositionR.Y = graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height;
+            }
+
+            // bounce on walls
+            if (ballPosition.Y > ballMaxY || ballPosition.Y < 0)
                 ballSpeed.Y *= -1;
+
+            // paddle collision
+            Rectangle ballRect = new Rectangle((int)ballPosition.X, (int)ballPosition.Y, (int)ball.Width, (int)ball.Height);
+            Rectangle paddleRectL = new Rectangle((int)paddlePositionL.X, (int)paddlePositionL.Y, (int)paddle.Width, (int)paddle.Height);
+            Rectangle paddleRectR = new Rectangle((int)paddlePositionR.X, (int)paddlePositionR.Y, (int)paddle.Width, (int)paddle.Height);
+
+            if (ballRect.Intersects(paddleRectL))
+            {
+                // increase ball speed when hit
+                ballSpeed.X += 50;
+                if (ballSpeed.Y < 0)
+                    ballSpeed.Y -= 10;
+                else
+                    ballSpeed.Y += 10;
+
+                // bounce ball
+                ballSpeed.X *= -1;
+            }
+
+            if (ballRect.Intersects(paddleRectR))
+            {
+                // increase ball speed when hit
+                ballSpeed.X += 50;
+                if (ballSpeed.Y < 0)
+                    ballSpeed.Y -= 10;
+                else
+                    ballSpeed.Y += 10;
+
+                // bounce ball
+                ballSpeed.X *= -1;
+            }
 
             base.Update(gameTime);
         }
