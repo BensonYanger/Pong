@@ -138,9 +138,9 @@ namespace Pong
 
             // move the right paddle
             if (ballPosition.Y < paddlePositionR.Y + paddle.Height / 2)
-                paddlePositionR.Y -= 5;
+                paddlePositionR.Y -= 4.5f;
             else if (ballPosition.Y > paddlePositionR.Y + paddle.Height / 2)
-                paddlePositionR.Y += 5;
+                paddlePositionR.Y += 4.5f;
 
             //paddle bounds checking
             int paddleMaxY = GraphicsDevice.Viewport.Height - paddle.Height;
