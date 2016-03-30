@@ -46,9 +46,9 @@ namespace Pong
         /// </summary>
         protected override void Initialize()
         {
-            // paddle
+            // paddle data
             paddle = new Texture2D(this.GraphicsDevice, 10, 50);
-            Color[] paddleData = new Color[25 * 25];
+            Color[] paddleData = new Color[10 * 50];
             for (int i = 0; i < 500; i++)
             {
                 paddleData[i] = Color.White;
@@ -58,7 +58,7 @@ namespace Pong
             paddlePositionL = new Vector2(25 - paddle.Width, graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height);
             paddlePositionR = new Vector2(graphics.GraphicsDevice.Viewport.Width - 25, graphics.GraphicsDevice.Viewport.Height / 2 - paddle.Height);
 
-            // ball
+            // ball data
             ball = new Texture2D(this.GraphicsDevice, 25, 25);
             Color[] ballData = new Color[25 * 25];
             for (int i = 0; i < 625; i++)
@@ -77,9 +77,10 @@ namespace Pong
             // Sound volume
             SoundEffect.MasterVolume = 0.5f;
 
-            // ball spawn
+            // ball rng
             ballRng = rnd.Next(0, 9);
 
+            // initial ball spawn
             if (ballRng <= 4)
             {
                 ballSpeed = new Vector2(200, 200);
@@ -168,7 +169,7 @@ namespace Pong
             // win condition
             if (ballPosition.X < 0)
             {
-                // reset ball
+                // ball rng
                 ballRng = rnd.Next(0, 10);
 
                 if (ballRng <= 4)
@@ -181,6 +182,7 @@ namespace Pong
                     ballSpeed.X = -200;
                     ballSpeed.Y = -200;
                 }
+                // reset ball
                 ballPosition.X = graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width;
                 ballPosition.Y = (graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height) + rnd.Next(-200, 200);
                 // reset paddles
@@ -189,9 +191,10 @@ namespace Pong
                 // play lose sound
                 loseSound.Play();
             }
+            // lose condition
             else if (ballPosition.X > ballMaxX)
             {
-                // reset ball
+                // ball rng
                 ballRng = rnd.Next(0, 10);
 
                 if (ballRng <= 4)
@@ -204,6 +207,7 @@ namespace Pong
                     ballSpeed.X = -200;
                     ballSpeed.Y = -200;
                 }
+                // reset ball
                 ballPosition.X = graphics.GraphicsDevice.Viewport.Width / 2 + ball.Width;
                 ballPosition.Y = (graphics.GraphicsDevice.Viewport.Height / 2 - ball.Height) + rnd.Next(-200, 200);
                 // reset paddles
